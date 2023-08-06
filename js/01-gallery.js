@@ -5,18 +5,18 @@ console.log(galleryItems);
 
 const ulGallery = document.querySelector(".gallery");
 
-ulGallery.addEventListener("click", modalImage)
+ulGallery.addEventListener("click", modalImage);
 
 renderGallery(galleryItems);
 
 function renderGallery(arr) {
-    if (typeof arr !== "object") return null;
+  if (typeof arr !== "object") return null;
 
+  const html = arr
+    .map((item) => {
+      const { preview, original, description } = item;
 
-    const html = arr.map((item) => {
-    const { preview, original, description } = item;
-
-    const html = `
+      const html = `
         <li class="gallery__item">
             <a class="gallery__link" href="${original}">
                 <img
@@ -27,38 +27,37 @@ function renderGallery(arr) {
                 />
             </a>
         </li>`;
-        return html;
-    }).join("");
+      return html;
+    })
+    .join("");
 
-    ulGallery.innerHTML = html
+  ulGallery.innerHTML = html;
 }
-  
 
 function modalImage(event) {
-    event.preventDefault();
+  event.preventDefault();
 
-    const target = event.target;
-    if (target.nodeName !== "IMG") {
-        return;
+  const target = event.target;
+  if (target.nodeName !== "IMG") {
+    return;
+  }
+
+  const instance = basicLightbox.create(
+    `<img src="${target.dataset.source}" width="800" height="600"/>`,
+    {
+      onShow: () => ulGallery.addEventListener("keydown", event => modalClose({event, instance})),
+      onClose: () => ulGallery.removeEventListener("keydown", event => modalClose({event, instance})),
     }
+  );
 
-
-    const instance = basicLightbox.create(
-        `<img src="${target.dataset.source}" width="800" height="600"/>`,
-        {
-            onShow: () => ulGallery.addEventListener('keydown', modalClose),
-            onClose: () => ulGallery.removeEventListener("keydown", modalClose)
-        }
-    )
-
-    instance.show();
-
-    modalClose({event, instance})
+  instance.show();
+  
 }
- 
+
 
 function modalClose({ event, instance}) {
-    if (event.key === "Escape") {
-        instance.close()
-    }
+  console.log(event.key);
+  if (event.key === "Escape") {
+    instance.close();
+  }
 }
